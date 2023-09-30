@@ -8,8 +8,23 @@ from manageOSC import *
 # from mediapipe.tasks import python
 # from mediapipe.tasks.python import vision
 
-abs_path = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(abs_path, "./gesture_recognizer_CV.task")
+# abs_path = os.path.dirname(os.path.abspath(__file__))
+# model_path = os.path.join(abs_path, "./gesture_recognizer_CV.task")
+
+# sc_path = "C:/Program Files/SuperCollider-3.12.2"
+sc_path = glob.glob("C:/Program Files/SuperCollider*")[0]
+# sc_path=sc_path[0]
+print("SC PATH: "+sc_path)
+
+print("ACTUAL PATH: "+os.getcwd())
+dist_path = os.getcwd()
+
+os.chdir('..')
+abs_path = os.getcwd()
+
+os.chdir(dist_path)
+
+model_path = os.path.join(abs_path,"./gesture_recognizer_CV.task")
 
 BaseOptions = mp.tasks.BaseOptions
 GestureRecognizer = mp.tasks.vision.GestureRecognizer
@@ -20,11 +35,6 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 base_options = BaseOptions(model_asset_path=model_path)
 img_to_draw = np.zeros((100,100,3), dtype=np.uint8)
 cat=""
-
-# sc_path = "C:/Program Files/SuperCollider-3.12.2"
-sc_path = glob.glob("C:/Program Files/SuperCollider*")[0]
-# sc_path=sc_path[0]
-print("SC PATH: "+sc_path)
 
 HEIGHT=0
 WIDTH=0
@@ -51,8 +61,8 @@ if __name__ == "__main__":
     # Create a thread for running the Processing application
     current_directory = os.path.dirname(os.path.abspath(__file__))
     
-    sketch_folder = os.path.join(current_directory, 'CelestialVibesPDE')
-    script_sc_folder = os.path.join(current_directory, 'CelestialVibesPDE\CelestialVibesSC.scd')
+    sketch_folder = os.path.join(abs_path, 'CelestialVibesPDE')
+    script_sc_folder = os.path.join(abs_path, 'CelestialVibesPDE\CelestialVibesSC.scd')
    
     processing_thread = threading.Thread(target=run_processing_sketch, args=(sketch_folder,))
     processing_thread.start()
