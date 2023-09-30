@@ -1,0 +1,5 @@
+# python build distribution
+build/
+dist/
+__pycache__/
+windows-amd64/
