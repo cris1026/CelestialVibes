@@ -530,7 +530,7 @@ float zoom;
 
 
 void oscEvent(OscMessage theOscMessage) {
-  if ( startPhase == 2) {
+  if ( startPhase > 2) {
     /* print the address pattern and the typetag of the received OscMessage */
     print("### received an osc message.");
     print(" || addrpattern: "+theOscMessage.addrPattern());
@@ -716,12 +716,11 @@ void oscEvent(OscMessage theOscMessage) {
         setHandVisible(msg);
       }
     }
-
-    if (theOscMessage.checkAddrPattern("/EXIT")==true) {
-      OscMessage msg = new OscMessage("/exit");
-      oscP5.send(msg, myRemoteLocation);
-      exit();
-    }
+  }
+  if (theOscMessage.checkAddrPattern("/EXIT")==true) {
+    OscMessage msg = new OscMessage("/exit");
+    oscP5.send(msg, myRemoteLocation);
+    exit();
   }
 }
 
