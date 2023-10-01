@@ -46,11 +46,15 @@ The application of this algorithm forms the beating heart of our system's physic
 
 ## USER GUIDE
 ### Installation
-Installation is quite simple as it involves downloading the folder containing the executables and running *CelestialVibe.exe*.
+Installation is quite simple as it involves downloading the folder containing the executables and running *./dist/CelestialVibes.exe*.
 
 As an important pre-requisite, however, you must have Supercollider installed in the recommended location "*C:\Program Files\Supercollider-3.12.2*". 
 
-Also, the supercollider code uses an extension plugin that can be find in the file "*sc3-plugins-3.13.0-Windows-64bit.zip*" and needs to be extracted in the folder "*C:\ProgramData\SuperCollider\Extensions*".
+Also, the supercollider code uses an extension plugin that can be find in the file "*sc3-plugins-3.13.0-Windows-64bit.zip*" and needs to be extracted in the folder "*C:\ProgramData\SuperCollider\Extensions*", as said in the readme inside.
+
+**IMPORTANT**: It is possible that Windows Defender will detect the programme as a virus and delete it, so it is recommended to add the downloaded folder to the exceptions. Furthermore, in newer versions of Windows, such as Windows 11, the boot of the Supercollider server may be delayed again due to the antivirus.
+
+<ins>**THE WHOLE SYSTEM HAS BEEN TESTED AND BUILDED ON WINDOWS O.S.**</ins>
 
 ---
 ### Usage 
