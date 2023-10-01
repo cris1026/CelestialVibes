@@ -46,7 +46,8 @@ The application of this algorithm forms the beating heart of our system's physic
 
 ## USER GUIDE
 ### Installation
-Installation is quite simple as it involves downloading the folder containing the executables and running *./dist/CelestialVibes.exe*.
+Installation is quite simple as it involves downloading the folder containing the executables and running *src/dist/CelestialVibes.exe*.
+This folder can be found [here](https://mega.nz/folder/ZzkxDZzb#dOnsJTfA-jYqzj6uCGyWCw).
 
 As an important pre-requisite, however, you must have Supercollider installed in the recommended location "*C:\Program Files\Supercollider-3.12.2*". 
 
@@ -157,6 +158,14 @@ The ones that depart instead from processing are:
 - volumes of channels
 - reset of the system
 - exit from supercollider server
+
+## Demo and Presentation links
+<a align="center" href="https://youtu.be/EH7wfZudOZM" target="_blank">
+ <img src="./GitAssets/youtube.png" alt="Watch the video" />
+</a>
+
+[Presentation Link](https://prezi.com/view/eO7DVX5DXwY9fyZPt1vz/).
+
 
 ## The group
 Alfieri Riccardo (riccardo.alfieri@mail.polimi.it) \
