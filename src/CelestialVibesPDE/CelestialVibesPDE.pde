@@ -530,196 +530,198 @@ float zoom;
 
 
 void oscEvent(OscMessage theOscMessage) {
-  /* print the address pattern and the typetag of the received OscMessage */
-  print("### received an osc message.");
-  print(" || addrpattern: "+theOscMessage.addrPattern());
-  println(" || typetag:"+theOscMessage.typetag());
+  if ( startPhase == 2) {
+    /* print the address pattern and the typetag of the received OscMessage */
+    print("### received an osc message.");
+    print(" || addrpattern: "+theOscMessage.addrPattern());
+    println(" || typetag:"+theOscMessage.typetag());
 
-  // PSS ROTATION OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/PSS_rotation_start")==true) {
-    if (theOscMessage.checkTypetag("ff")) {
+    // PSS ROTATION OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/PSS_rotation_start")==true) {
+      if (theOscMessage.checkTypetag("ff")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      float y = theOscMessage.get(1).floatValue();
+        float x = theOscMessage.get(0).floatValue();
+        float y = theOscMessage.get(1).floatValue();
 
-      float inc_X = map(x, 0, 1, -2*PI, 2*PI);
-      float inc_Y = map(y, 0, 1, -2*PI, 2*PI);
+        float inc_X = map(x, 0, 1, -2*PI, 2*PI);
+        float inc_Y = map(y, 0, 1, -2*PI, 2*PI);
 
-      startAngle_X = inc_X;
-      startAngle_Y = inc_Y;
+        startAngle_X = inc_X;
+        startAngle_Y = inc_Y;
 
-      old_inc_X = 0;
-      old_inc_Y = 0;
+        old_inc_X = 0;
+        old_inc_Y = 0;
 
-      angle_Y = 0;
-      angle_X = 0;
+        angle_Y = 0;
+        angle_X = 0;
+      }
+    } else if (theOscMessage.checkAddrPattern("/PSS_rotation")==true) {
+      if (theOscMessage.checkTypetag("ff")) {
+
+        float x = theOscMessage.get(0).floatValue();
+        float y = theOscMessage.get(1).floatValue();
+
+        float inc_X = map(x, 0, 1, -2*PI, 2*PI);
+        float inc_Y = map(y, 0, 1, -2*PI, 2*PI);
+
+        angle_Y = -(inc_X - old_inc_X - startAngle_X);
+        angle_X = inc_Y - old_inc_Y - startAngle_Y;
+
+        old_inc_X = inc_X - startAngle_X;
+        old_inc_Y = inc_Y - startAngle_Y;
+      }
     }
-  } else if (theOscMessage.checkAddrPattern("/PSS_rotation")==true) {
-    if (theOscMessage.checkTypetag("ff")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      float y = theOscMessage.get(1).floatValue();
+    // PSS PAN OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/PSS_pan_start")==true) {
+      if (theOscMessage.checkTypetag("ff")) {
 
-      float inc_X = map(x, 0, 1, -2*PI, 2*PI);
-      float inc_Y = map(y, 0, 1, -2*PI, 2*PI);
+        float x = theOscMessage.get(0).floatValue();
+        float y = theOscMessage.get(1).floatValue();
 
-      angle_Y = -(inc_X - old_inc_X - startAngle_X);
-      angle_X = inc_Y - old_inc_Y - startAngle_Y;
+        float inc_Pan_X = map(x, 0, 1, -1500, 1500);
+        float inc_Pan_Y = map(y, 0, 1, -1500, 1500);
 
-      old_inc_X = inc_X - startAngle_X;
-      old_inc_Y = inc_Y - startAngle_Y;
+        startPan_X = inc_Pan_X;
+        startPan_Y = inc_Pan_Y;
+
+        old_inc_Pan_X = 0;
+        old_inc_Pan_Y = 0;
+
+        Pan_X = 0;
+        Pan_Y = 0;
+      }
+    } else if (theOscMessage.checkAddrPattern("/PSS_pan")==true) {
+      if (theOscMessage.checkTypetag("ff")) {
+
+        float x = theOscMessage.get(0).floatValue();
+        float y = theOscMessage.get(1).floatValue();
+
+        float inc_Pan_X = map(x, 0, 1, -1500, 1500);
+        float inc_Pan_Y = map(y, 0, 1, -1500, 1500);
+
+        Pan_X = -(inc_Pan_X - old_inc_Pan_X - startPan_X);
+        Pan_Y = -(inc_Pan_Y - old_inc_Pan_Y - startPan_Y);
+
+        old_inc_Pan_X = inc_Pan_X - startPan_X;
+        old_inc_Pan_Y = inc_Pan_Y - startPan_Y;
+      }
     }
-  }
 
-  // PSS PAN OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/PSS_pan_start")==true) {
-    if (theOscMessage.checkTypetag("ff")) {
+    // PSS ZOOM OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/PSS_zoom_start")==true) {
+      if (theOscMessage.checkTypetag("f")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      float y = theOscMessage.get(1).floatValue();
+        float x = theOscMessage.get(0).floatValue();
+        x = constrain(x, 0.1, 0.55);
+        float inc_zoom = map(x, 0.1, 0.55, 0, 4000);
+        start_zoom = inc_zoom;
+        old_inc_zoom = 0;
+        zoom = inc_zoom - old_inc_zoom - start_zoom;
+        cam.setDistance(cam.getDistance() + zoom);
+      }
+    } else if (theOscMessage.checkAddrPattern("/PSS_zoom")==true) {
+      if (theOscMessage.checkTypetag("f")) {
 
-      float inc_Pan_X = map(x, 0, 1, -1500, 1500);
-      float inc_Pan_Y = map(y, 0, 1, -1500, 1500);
-
-      startPan_X = inc_Pan_X;
-      startPan_Y = inc_Pan_Y;
-
-      old_inc_Pan_X = 0;
-      old_inc_Pan_Y = 0;
-
-      Pan_X = 0;
-      Pan_Y = 0;
+        float x = theOscMessage.get(0).floatValue();
+        x = constrain(x, 0.1, 0.55);
+        float inc_zoom = map(x, 0.1, 0.55, 0, 4000);
+        zoom = -(inc_zoom - old_inc_zoom - start_zoom);
+        old_inc_zoom = inc_zoom - start_zoom;
+        cam.setDistance(cam.getDistance() + zoom, 1000);
+      }
     }
-  } else if (theOscMessage.checkAddrPattern("/PSS_pan")==true) {
-    if (theOscMessage.checkTypetag("ff")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      float y = theOscMessage.get(1).floatValue();
+    // MIXER MASTER CHANGING OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/mixer_1_changing")==true) {
+      if (theOscMessage.checkTypetag("f")) {
 
-      float inc_Pan_X = map(x, 0, 1, -1500, 1500);
-      float inc_Pan_Y = map(y, 0, 1, -1500, 1500);
-
-      Pan_X = -(inc_Pan_X - old_inc_Pan_X - startPan_X);
-      Pan_Y = -(inc_Pan_Y - old_inc_Pan_Y - startPan_Y);
-
-      old_inc_Pan_X = inc_Pan_X - startPan_X;
-      old_inc_Pan_Y = inc_Pan_Y - startPan_Y;
+        float y = theOscMessage.get(0).floatValue();
+        float mix1_val = constrain(y, 0.25, 0.75);
+        mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
+        masterSli.setValue(mix1_val);
+        OscMessage msg = new OscMessage("/masterFader");
+        msg.add(mix1_val);
+        oscP5.send(msg, myRemoteLocation);
+      }
     }
-  }
 
-  // PSS ZOOM OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/PSS_zoom_start")==true) {
-    if (theOscMessage.checkTypetag("f")) {
+    // MIXER BASS CHANGING OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/mixer_2_changing")==true) {
+      if (theOscMessage.checkTypetag("f")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      x = constrain(x, 0.1, 0.55);
-      float inc_zoom = map(x, 0.1, 0.55, 0, 4000);
-      start_zoom = inc_zoom;
-      old_inc_zoom = 0;
-      zoom = inc_zoom - old_inc_zoom - start_zoom;
-      cam.setDistance(cam.getDistance() + zoom);
+        float y = theOscMessage.get(0).floatValue();
+        float mix1_val = constrain(y, 0.25, 0.75);
+        mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
+        bassSli.setValue(mix1_val);
+        OscMessage msg = new OscMessage("/bassFader");
+        msg.add(mix1_val);
+        oscP5.send(msg, myRemoteLocation);
+      }
     }
-  } else if (theOscMessage.checkAddrPattern("/PSS_zoom")==true) {
-    if (theOscMessage.checkTypetag("f")) {
 
-      float x = theOscMessage.get(0).floatValue();
-      x = constrain(x, 0.1, 0.55);
-      float inc_zoom = map(x, 0.1, 0.55, 0, 4000);
-      zoom = -(inc_zoom - old_inc_zoom - start_zoom);
-      old_inc_zoom = inc_zoom - start_zoom;
-      cam.setDistance(cam.getDistance() + zoom, 1000);
+    // MIXER PAD CHANGING OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/mixer_3_changing")==true) {
+      if (theOscMessage.checkTypetag("f")) {
+
+        float y = theOscMessage.get(0).floatValue();
+        float mix1_val = constrain(y, 0.25, 0.75);
+        mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
+        padSli.setValue(mix1_val);
+        OscMessage msg = new OscMessage("/padFader");
+        msg.add(mix1_val);
+        oscP5.send(msg, myRemoteLocation);
+      }
     }
-  }
 
-  // MIXER MASTER CHANGING OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/mixer_1_changing")==true) {
-    if (theOscMessage.checkTypetag("f")) {
+    // MIXER PAD CHANGING OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/mixer_4_changing")==true) {
+      if (theOscMessage.checkTypetag("f")) {
 
-      float y = theOscMessage.get(0).floatValue();
-      float mix1_val = constrain(y, 0.25, 0.75);
-      mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
-      masterSli.setValue(mix1_val);
-      OscMessage msg = new OscMessage("/masterFader");
-      msg.add(mix1_val);
+        float y = theOscMessage.get(0).floatValue();
+        float mix1_val = constrain(y, 0.25, 0.75);
+        mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
+        arpSli.setValue(mix1_val);
+        OscMessage msg = new OscMessage("/arpFader");
+        msg.add(mix1_val);
+        oscP5.send(msg, myRemoteLocation);
+      }
+    }
+
+    // HAND DETECTION IMAGES OSC MESSAGE
+    if (theOscMessage.checkAddrPattern("/gesture")==true) {
+      if (theOscMessage.checkTypetag("")) {
+        hand[1].setVisible(false);
+        hand[2].setVisible(false);
+        hand[3].setFill(color(100, 100, 100));
+        hand[4].setFill(color(100, 100, 100));
+        hand[3].setVisible(true);
+        hand[4].setVisible(true);
+        hand[5].setVisible(false);
+        hand[6].setVisible(false);
+        hand[7].setVisible(false);
+        hand[8].setVisible(false);
+        hand[9].setVisible(false);
+        hand[10].setVisible(false);
+        hand[11].setVisible(false);
+        hand[12].setVisible(false);
+      } else if (theOscMessage.checkTypetag("s")) {
+        String[] msg = new String[1];
+        msg[0] = theOscMessage.get(0).toString();
+        setHandVisible(msg);
+      } else if (theOscMessage.checkTypetag("ss")) {
+        String[] msg = new String[2];
+        msg[0] = theOscMessage.get(0).toString();
+        msg[1] = theOscMessage.get(1).toString();
+        setHandVisible(msg);
+      }
+    }
+
+    if (theOscMessage.checkAddrPattern("/EXIT")==true) {
+      OscMessage msg = new OscMessage("/exit");
       oscP5.send(msg, myRemoteLocation);
+      exit();
     }
-  }
-
-  // MIXER BASS CHANGING OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/mixer_2_changing")==true) {
-    if (theOscMessage.checkTypetag("f")) {
-
-      float y = theOscMessage.get(0).floatValue();
-      float mix1_val = constrain(y, 0.25, 0.75);
-      mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
-      bassSli.setValue(mix1_val);
-      OscMessage msg = new OscMessage("/bassFader");
-      msg.add(mix1_val);
-      oscP5.send(msg, myRemoteLocation);
-    }
-  }
-
-  // MIXER PAD CHANGING OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/mixer_3_changing")==true) {
-    if (theOscMessage.checkTypetag("f")) {
-
-      float y = theOscMessage.get(0).floatValue();
-      float mix1_val = constrain(y, 0.25, 0.75);
-      mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
-      padSli.setValue(mix1_val);
-      OscMessage msg = new OscMessage("/padFader");
-      msg.add(mix1_val);
-      oscP5.send(msg, myRemoteLocation);
-    }
-  }
-
-  // MIXER PAD CHANGING OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/mixer_4_changing")==true) {
-    if (theOscMessage.checkTypetag("f")) {
-
-      float y = theOscMessage.get(0).floatValue();
-      float mix1_val = constrain(y, 0.25, 0.75);
-      mix1_val= map(mix1_val, 0.25, 0.75, 1.5, 0.0001);
-      arpSli.setValue(mix1_val);
-      OscMessage msg = new OscMessage("/arpFader");
-      msg.add(mix1_val);
-      oscP5.send(msg, myRemoteLocation);
-    }
-  }
-
-  // HAND DETECTION IMAGES OSC MESSAGE
-  if (theOscMessage.checkAddrPattern("/gesture")==true) {
-    if (theOscMessage.checkTypetag("")) {
-      hand[1].setVisible(false);
-      hand[2].setVisible(false);
-      hand[3].setFill(color(100, 100, 100));
-      hand[4].setFill(color(100, 100, 100));
-      hand[3].setVisible(true);
-      hand[4].setVisible(true);
-      hand[5].setVisible(false);
-      hand[6].setVisible(false);
-      hand[7].setVisible(false);
-      hand[8].setVisible(false);
-      hand[9].setVisible(false);
-      hand[10].setVisible(false);
-      hand[11].setVisible(false);
-      hand[12].setVisible(false);
-    } else if (theOscMessage.checkTypetag("s")) {
-      String[] msg = new String[1];
-      msg[0] = theOscMessage.get(0).toString();
-      setHandVisible(msg);
-    } else if (theOscMessage.checkTypetag("ss")) {
-      String[] msg = new String[2];
-      msg[0] = theOscMessage.get(0).toString();
-      msg[1] = theOscMessage.get(1).toString();
-      setHandVisible(msg);
-    }
-  }
-
-  if (theOscMessage.checkAddrPattern("/EXIT")==true) {
-    OscMessage msg = new OscMessage("/exit");
-    oscP5.send(msg, myRemoteLocation);
-    exit();
   }
 }
 
